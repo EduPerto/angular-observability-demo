@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  angular-app:
+    build: .
+    image: angular-observability-demo
+    container_name: angular-observability-demo
+    ports:
+      - "8080:80"
+    environment:
+      # Desenvolvimento
+      - NG_APP_API_URL=https://api.preceba.com/api
+      - NG_APP_PRODUCTION=true
+      - NG_APP_LOG_LEVEL=error
+    restart: unless-stopped
+
+  # Exemplo: múltiplos ambientes
+  angular-app-staging:
+    image: angular-observability-demo
+    container_name: angular-observability-demo-staging
+    ports:
+      - "8081:80"
+    environment:
+      # Staging
+      - NG_APP_API_URL=https://api.staging.preceba.com/api
+      - NG_APP_PRODUCTION=false
+      - NG_APP_LOG_LEVEL=debug
+    restart: unless-stopped
+    profiles:
+      - staging
