@@ -1,0 +1,288 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5em;
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 1.2em;
+  opacity: 0.9;
+}
+
+h2 {
+  color: #333;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+.environment-info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.env-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.env-item {
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.env-item strong {
+  display: block;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.env-item span {
+  color: #555;
+  word-break: break-all;
+}
+
+.actions {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-debug {
+  background: #6c757d;
+}
+
+.btn-debug:hover {
+  background: #5a6268;
+}
+
+.btn-info {
+  background: #0dcaf0;
+}
+
+.btn-info:hover {
+  background: #0bb8db;
+}
+
+.btn-warn {
+  background: #ffc107;
+}
+
+.btn-warn:hover {
+  background: #e0a800;
+}
+
+.btn-error {
+  background: #dc3545;
+}
+
+.btn-error:hover {
+  background: #c82333;
+}
+
+.btn-http {
+  background: #28a745;
+}
+
+.btn-http:hover {
+  background: #218838;
+}
+
+.btn-error-handler {
+  background: #e83e8c;
+}
+
+.btn-error-handler:hover {
+  background: #d63384;
+}
+
+.btn-clear {
+  background: #6c757d;
+}
+
+.btn-clear:hover {
+  background: #5a6268;
+}
+
+.log-history {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.log-container {
+  background: white;
+  border-radius: 5px;
+  padding: 15px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.no-logs {
+  text-align: center;
+  color: #999;
+  padding: 40px;
+  font-style: italic;
+}
+
+.log-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.log-entry {
+  padding: 15px;
+  border-radius: 5px;
+  border-left: 4px solid #ccc;
+  background: #fafafa;
+}
+
+.log-entry.log-debug {
+  border-left-color: #6c757d;
+  background: #f8f9fa;
+}
+
+.log-entry.log-info {
+  border-left-color: #0dcaf0;
+  background: #e7f7ff;
+}
+
+.log-entry.log-warn {
+  border-left-color: #ffc107;
+  background: #fff9e6;
+}
+
+.log-entry.log-error {
+  border-left-color: #dc3545;
+  background: #ffe6e6;
+}
+
+.log-header {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.log-timestamp {
+  font-weight: bold;
+  color: #666;
+}
+
+.log-level {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: bold;
+  background: #e0e0e0;
+  color: #333;
+}
+
+.log-source {
+  color: #888;
+  font-style: italic;
+}
+
+.log-message {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.log-data {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 3px;
+  overflow-x: auto;
+}
+
+.log-data pre {
+  margin: 0;
+  font-size: 12px;
+  color: #555;
+}
+
+.instructions {
+  background: #e7f3ff;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #0dcaf0;
+}
+
+.instructions ul {
+  margin-top: 15px;
+  line-height: 1.8;
+}
+
+.instructions li {
+  color: #555;
+}
+
+.instructions code {
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  color: #d63384;
+}
+
+@media (max-width: 768px) {
+  .button-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .env-grid {
+    grid-template-columns: 1fr;
+  }
+}
