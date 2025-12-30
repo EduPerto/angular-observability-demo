@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Subject } from 'rxjs';
+import { MetricsService } from '../otel/metrics/metrics.service';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -26,9 +27,15 @@ export class LoggerService {
   private maxHistorySize = 100;
   private currentLogLevel: LogLevel;
   private logAdded$ = new Subject<LogEntry[]>();
+  private metricsService = inject(MetricsService, { optional: true });
 
   constructor() {
     this.currentLogLevel = this.parseLogLevel(environment.logLevel);
+
+    // Register observable gauge for log history size
+    if (this.metricsService) {
+      this.metricsService.registerLogHistorySizeGauge(() => this.getLogHistorySize());
+    }
   }
 
   private parseLogLevel(level: string): LogLevel {
@@ -83,6 +90,11 @@ export class LoggerService {
     }
 
     this.consoleLog(entry);
+
+    // Record log metric
+    if (this.metricsService) {
+      this.metricsService.recordLog(level);
+    }
 
     // Emite o histórico atualizado para todos os observers
     this.logAdded$.next([...this.logHistory]);
@@ -140,5 +152,9 @@ export class LoggerService {
   setLogLevel(level: LogLevel): void {
     this.currentLogLevel = level;
     this.info('Log level changed', { newLevel: LogLevel[level] }, 'LoggerService');
+  }
+
+  getLogHistorySize(): number {
+    return this.logHistory.length;
   }
 }

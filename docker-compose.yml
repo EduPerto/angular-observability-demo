@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  # Jaeger all-in-one for observability
+  jaeger:
+    image: jaegertracing/all-in-one:1.62
+    container_name: jaeger
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4318:4318"     # OTLP HTTP receiver
+      - "4317:4317"     # OTLP gRPC receiver (optional)
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
+    restart: unless-stopped
+    networks:
+      - observability-network
+
   angular-app:
     build: .
     image: angular-observability-demo
@@ -8,11 +23,20 @@ services:
     ports:
       - "8080:80"
     environment:
-      # Desenvolvimento
+      # Application config
       - NG_APP_API_URL=https://api.preceba.com/api
       - NG_APP_PRODUCTION=true
       - NG_APP_LOG_LEVEL=info
+      # OpenTelemetry config
+      - NG_APP_OTEL_ENABLED=true
+      - NG_APP_OTEL_TRACING_ENDPOINT=http://jaeger:4318/v1/traces
+      - NG_APP_OTEL_METRICS_ENDPOINT=http://jaeger:4318/v1/metrics
+      - NG_APP_OTEL_SAMPLE_RATE=0.1
+    depends_on:
+      - jaeger
     restart: unless-stopped
+    networks:
+      - observability-network
 
   # Exemplo: múltiplos ambientes
   angular-app-staging:
@@ -25,6 +49,19 @@ services:
       - NG_APP_API_URL=https://api.staging.preceba.com/api
       - NG_APP_PRODUCTION=false
       - NG_APP_LOG_LEVEL=debug
+      # OpenTelemetry config
+      - NG_APP_OTEL_ENABLED=true
+      - NG_APP_OTEL_TRACING_ENDPOINT=http://jaeger:4318/v1/traces
+      - NG_APP_OTEL_METRICS_ENDPOINT=http://jaeger:4318/v1/metrics
+      - NG_APP_OTEL_SAMPLE_RATE=1.0
+    depends_on:
+      - jaeger
     restart: unless-stopped
     profiles:
       - staging
+    networks:
+      - observability-network
+
+networks:
+  observability-network:
+    driver: bridge

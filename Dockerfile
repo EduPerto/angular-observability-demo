@@ -33,6 +33,12 @@ ENV NG_APP_API_URL=https://api.preceba.com/api
 ENV NG_APP_PRODUCTION=true
 ENV NG_APP_LOG_LEVEL=info
 
+# OpenTelemetry environment variables
+ENV NG_APP_OTEL_ENABLED=true
+ENV NG_APP_OTEL_TRACING_ENDPOINT=http://localhost:4318/v1/traces
+ENV NG_APP_OTEL_METRICS_ENDPOINT=http://localhost:4318/v1/metrics
+ENV NG_APP_OTEL_SAMPLE_RATE=0.1
+
 # Copiar configuração customizada do Nginx (opcional)
 # COPY nginx.conf /etc/nginx/nginx.conf
 
