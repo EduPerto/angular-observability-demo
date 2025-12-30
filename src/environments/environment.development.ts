@@ -12,12 +12,12 @@ export const environment = {
     environment: 'development',
     tracing: {
       enabled: true,
-      endpoint: 'http://localhost:4318/v1/traces',
+      endpoint: 'http://localhost:4318/v1/traces', // Browser acessível
       sampleRate: 1.0, // 100% sampling in development
     },
     metrics: {
       enabled: true,
-      endpoint: 'http://localhost:4318/v1/metrics',
+      endpoint: 'http://localhost:4318/v1/metrics', // Browser acessível
       exportIntervalMillis: 60000, // Export every 60 seconds
     }
   }

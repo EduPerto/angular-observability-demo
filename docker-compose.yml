@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Jaeger all-in-one for observability
   jaeger:
-    image: jaegertracing/all-in-one:1.62
+    image: jaegertracing/all-in-one:latest
     container_name: jaeger
     ports:
       - "16686:16686"   # Jaeger UI
@@ -12,6 +12,9 @@ services:
     environment:
       - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
+      # Enable CORS for browser access
+      - COLLECTOR_OTLP_HTTP_CORS_ALLOWED_ORIGINS=*
+      - COLLECTOR_OTLP_HTTP_CORS_ALLOWED_HEADERS=*
     restart: unless-stopped
     networks:
       - observability-network
