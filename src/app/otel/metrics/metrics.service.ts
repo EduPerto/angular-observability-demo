@@ -12,13 +12,16 @@ export class MetricsService {
   private meter = metrics.getMeter('angular-app-metrics');
 
   // Metrics
-  private httpRequestsCounter: Counter;
-  private httpLatencyHistogram: Histogram;
-  private logsCounter: Counter;
+  private httpRequestsCounter!: Counter;
+  private httpLatencyHistogram!: Histogram;
+  private logsCounter!: Counter;
   private logHistorySizeGauge: ObservableGauge | null = null;
+  private metricsEnabled: boolean;
 
   constructor() {
-    if (!environment.otel.metrics.enabled) {
+    this.metricsEnabled = environment.otel.metrics.enabled;
+
+    if (!this.metricsEnabled) {
       return;
     }
 
@@ -45,7 +48,7 @@ export class MetricsService {
    * Records an HTTP request with status and duration
    */
   recordHttpRequest(method: string, url: string, statusCode: number, durationMs: number): void {
-    if (!environment.otel.metrics.enabled) return;
+    if (!this.metricsEnabled) return;
 
     this.httpRequestsCounter.add(1, {
       'http.method': method,
@@ -63,7 +66,7 @@ export class MetricsService {
    * Records a log entry by level
    */
   recordLog(level: LogLevel): void {
-    if (!environment.otel.metrics.enabled) return;
+    if (!this.metricsEnabled) return;
 
     this.logsCounter.add(1, {
       'log.level': LogLevel[level],
@@ -74,7 +77,7 @@ export class MetricsService {
    * Registers an observable gauge for log history size
    */
   registerLogHistorySizeGauge(getLogHistorySize: () => number): void {
-    if (!environment.otel.metrics.enabled) return;
+    if (!this.metricsEnabled) return;
 
     this.logHistorySizeGauge = this.meter.createObservableGauge(METRIC_NAMES.LOG_HISTORY_SIZE, {
       description: METRIC_DESCRIPTIONS[METRIC_NAMES.LOG_HISTORY_SIZE],
