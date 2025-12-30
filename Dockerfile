@@ -31,7 +31,7 @@ RUN chmod +x /docker-entrypoint.sh
 # Definir variáveis de ambiente padrão
 ENV NG_APP_API_URL=https://api.preceba.com/api
 ENV NG_APP_PRODUCTION=true
-ENV NG_APP_LOG_LEVEL=error
+ENV NG_APP_LOG_LEVEL=info
 
 # Copiar configuração customizada do Nginx (opcional)
 # COPY nginx.conf /etc/nginx/nginx.conf

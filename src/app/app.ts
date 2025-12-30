@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { LoggerService, LogLevel, LogEntry } from './services/logger.service';
-import { environment } from '../environments/environment.development';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +20,11 @@ export class App {
     private logger: LoggerService,
     private http: HttpClient
   ) {
+    // Inscrever-se para atualizar a UI automaticamente quando novos logs chegarem
+    this.logger.onLogAdded().subscribe(logs => {
+      this.logHistory.set(logs);
+    });
+
     this.logger.info('Application initialized', {
       env: environment.production ? 'production' : 'development',
       version: environment.version
@@ -28,34 +33,28 @@ export class App {
 
   testDebugLog(): void {
     this.logger.debug('This is a debug message', { timestamp: new Date() }, 'User Action');
-    this.updateLogHistory();
   }
 
   testInfoLog(): void {
     this.logger.info('This is an info message', { userId: 123, action: 'test' }, 'User Action');
-    this.updateLogHistory();
   }
 
   testWarnLog(): void {
     this.logger.warn('This is a warning message', { warning: 'Resource usage high' }, 'User Action');
-    this.updateLogHistory();
   }
 
   testErrorLog(): void {
     this.logger.error('This is an error message', { error: 'Something went wrong' }, 'User Action');
-    this.updateLogHistory();
   }
 
   testHttpRequest(): void {
-    this.logger.info('Testing HTTP request (will fail - demo only)', {}, 'User Action');
+    this.logger.info('Testing HTTP request', {}, 'User Action');
     this.http.get('https://jsonplaceholder.typicode.com/posts/1').subscribe({
       next: (data) => {
         this.logger.info('HTTP request successful', { data }, 'HTTP Test');
-        this.updateLogHistory();
       },
       error: (error) => {
         this.logger.error('HTTP request failed', { error }, 'HTTP Test');
-        this.updateLogHistory();
       }
     });
   }
@@ -69,11 +68,6 @@ export class App {
 
   clearLogs(): void {
     this.logger.clearLogHistory();
-    this.updateLogHistory();
-  }
-
-  private updateLogHistory(): void {
-    this.logHistory.set(this.logger.getLogHistory());
   }
 
   getLogLevelName(level: LogLevel): string {

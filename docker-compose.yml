@@ -11,7 +11,7 @@ services:
       # Desenvolvimento
       - NG_APP_API_URL=https://api.preceba.com/api
       - NG_APP_PRODUCTION=true
-      - NG_APP_LOG_LEVEL=error
+      - NG_APP_LOG_LEVEL=info
     restart: unless-stopped
 
   # Exemplo: múltiplos ambientes

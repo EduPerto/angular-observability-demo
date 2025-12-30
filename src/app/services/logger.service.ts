@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
+import { Subject } from 'rxjs';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -24,6 +25,7 @@ export class LoggerService {
   private logHistory: LogEntry[] = [];
   private maxHistorySize = 100;
   private currentLogLevel: LogLevel;
+  private logAdded$ = new Subject<LogEntry[]>();
 
   constructor() {
     this.currentLogLevel = this.parseLogLevel(environment.logLevel);
@@ -81,6 +83,9 @@ export class LoggerService {
     }
 
     this.consoleLog(entry);
+
+    // Emite o histórico atualizado para todos os observers
+    this.logAdded$.next([...this.logHistory]);
   }
 
   private consoleLog(entry: LogEntry): void {
@@ -122,8 +127,14 @@ export class LoggerService {
     return [...this.logHistory];
   }
 
+  // Observable para se inscrever em novos logs
+  onLogAdded() {
+    return this.logAdded$.asObservable();
+  }
+
   clearLogHistory(): void {
     this.logHistory = [];
+    this.logAdded$.next([]);
   }
 
   setLogLevel(level: LogLevel): void {
