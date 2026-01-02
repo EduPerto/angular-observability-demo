@@ -27,7 +27,7 @@ export const environment = {
     environment: (window as any).__env?.production === 'true' ? 'production' : 'development',
     tracing: {
       enabled: true,
-      endpoint: (window as any).__env?.otelTracingEndpoint || 'http://localhost:4318/v1/traces',
+      endpoint: (window as any).__env?.otelTracingEndpoint || 'https://receba-dev-jaeger.qxzjav.easypanel.host:4318/v1/traces',
       sampleRate: parseFloat((window as any).__env?.otelSampleRate || '0.1'), // 10% sampling in production
     },
     metrics: {
