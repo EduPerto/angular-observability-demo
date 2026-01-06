@@ -16,6 +16,7 @@ declare global {
 export const environment = {
   production: (window as any).__env?.production === 'true' || true,
   apiUrl: (window as any).__env?.apiUrl || 'https://api.preceba.com/api',
+  backendApiUrl: (window as any).__env?.backendApiUrl || 'http://localhost:5067',
   logLevel: (window as any).__env?.logLevel || 'info',
   enableLogging: true,
   appName: 'Angular Observability Demo',

@@ -1,7 +1,7 @@
 <div class="container">
   <header>
     <h1>{{ title() }}</h1>
-    <p class="subtitle">Sistema de Logging e Observabilidade</p>
+    <p class="subtitle">Sistema de Logging, Observabilidade e Distributed Tracing</p>
   </header>
 
   <div class="environment-info">
@@ -16,16 +16,16 @@
         <span>{{ environment.apiUrl }}</span>
       </div>
       <div class="env-item">
+        <strong>Backend API:</strong>
+        <span>{{ environment.backendApiUrl }}</span>
+      </div>
+      <div class="env-item">
         <strong>Log Level:</strong>
         <span>{{ environment.logLevel }}</span>
       </div>
       <div class="env-item">
-        <strong>Logging Enabled:</strong>
-        <span>{{ environment.enableLogging ? 'Yes' : 'No' }}</span>
-      </div>
-      <div class="env-item">
-        <strong>App Name:</strong>
-        <span>{{ environment.appName }}</span>
+        <strong>OpenTelemetry:</strong>
+        <span>{{ environment.otel.enabled ? 'Enabled' : 'Disabled' }}</span>
       </div>
       <div class="env-item">
         <strong>Version:</strong>
@@ -34,8 +34,148 @@
     </div>
   </div>
 
+  <!-- DISTRIBUTED TRACING SECTION -->
+  <div class="distributed-tracing-section">
+    <h2>🔗 Distributed Tracing Tests</h2>
+    <p class="section-description">
+      Teste a propagação de traces entre Angular (frontend) e .NET API (backend).
+      Visualize no <a href="http://localhost:16686" target="_blank">Jaeger UI</a>.
+    </p>
+
+    <div class="api-status" [ngClass]="getStatusClass()">
+      <span class="status-indicator"></span>
+      <span class="status-text">
+        @switch (apiStatus()) {
+        @case ('idle') { Aguardando ação... }
+        @case ('loading') { Carregando... }
+        @case ('success') { ✓ Sucesso! }
+        @case ('error') { ✗ Erro! }
+        }
+      </span>
+    </div>
+
+    <div class="button-group tracing-buttons">
+      <button (click)="testHealthCheck()" class="btn btn-trace btn-health">
+        🏥 Health Check
+      </button>
+      <button (click)="testGetUsers()" class="btn btn-trace btn-users">
+        👥 Get Users
+      </button>
+      <button (click)="testGetUserById()" class="btn btn-trace btn-user">
+        👤 Get User by ID
+      </button>
+      <button (click)="testCreateOrder()" class="btn btn-trace btn-order">
+        🛒 Create Order
+      </button>
+      <button (click)="testSlowOperation()" class="btn btn-trace btn-slow">
+        ⏱️ Slow Operation
+      </button>
+      <button (click)="testExternalCall()" class="btn btn-trace btn-external">
+        🌐 External Call
+      </button>
+    </div>
+
+    <h3 class="error-section-title">⚠️ Error Simulation (Trace com Erro)</h3>
+    <p class="error-section-description">
+      Teste traces com diferentes tipos de erro. Visualize no Jaeger como os erros são capturados e propagados.
+    </p>
+
+    <div class="button-group error-buttons">
+      <button (click)="testBadRequest()" class="btn btn-error-sim btn-400">
+        ❌ 400 Bad Request
+      </button>
+      <button (click)="testNotFound()" class="btn btn-error-sim btn-404">
+        🔍 404 Not Found
+      </button>
+      <button (click)="testInternalError()" class="btn btn-error-sim btn-500">
+        💥 500 Internal Error
+      </button>
+      <button (click)="testException()" class="btn btn-error-sim btn-exception">
+        🔥 Unhandled Exception
+      </button>
+      <button (click)="testDatabaseError()" class="btn btn-error-sim btn-database">
+        🗄️ Database Error
+      </button>
+      <button (click)="testCascadeError()" class="btn btn-error-sim btn-cascade">
+        🔗 Cascade Error
+      </button>
+    </div>
+
+    <h3 class="observability-section-title">🧪 Observability Tests (Loki + Jaeger + Prometheus)</h3>
+    <p class="observability-section-description">
+      Teste a integração completa de logs, traces e métricas. Visualize no
+      <a href="http://localhost:3000" target="_blank">Grafana</a>,
+      <a href="http://localhost:16686" target="_blank">Jaeger</a> e
+      <a href="http://localhost:9090" target="_blank">Prometheus</a>.
+    </p>
+
+    <div class="button-group observability-buttons">
+      <button (click)="testObservabilityLogs()" class="btn btn-observability btn-logs">
+        📝 Test Logs
+      </button>
+      <button (click)="testNestedTraces()" class="btn btn-observability btn-nested">
+        🔍 Nested Traces (7 spans)
+      </button>
+      <button (click)="testLatency('fast')" class="btn btn-observability btn-fast">
+        ⚡ Fast (10-50ms)
+      </button>
+      <button (click)="testLatency('slow')" class="btn btn-observability btn-slow-lat">
+        🐢 Slow (500-1000ms)
+      </button>
+      <button (click)="testLatency('very-slow')" class="btn btn-observability btn-very-slow">
+        🦥 Very Slow (2-5s)
+      </button>
+      <button (click)="testBatchProcessing()" class="btn btn-observability btn-batch">
+        📦 Batch Processing
+      </button>
+      <button (click)="testMetricsGeneration()" class="btn btn-observability btn-metrics">
+        📊 Generate Metrics
+      </button>
+      <button (click)="testCompleteFlow()" class="btn btn-observability btn-complete">
+        🚀 Complete Flow
+      </button>
+    </div>
+
+    @if (lastApiResponse()) {
+    <div class="api-response">
+      <h4>Last API Response:</h4>
+      <pre>{{ lastApiResponse() | json }}</pre>
+    </div>
+    }
+
+    @if (users().length > 0) {
+    <div class="data-display">
+      <h4>Users ({{ users().length }}):</h4>
+      <div class="data-list">
+        @for (user of users(); track user.id) {
+        <div class="data-item">
+          <span class="data-id">#{{ user.id }}</span>
+          <span class="data-name">{{ user.name }}</span>
+          <span class="data-role">{{ user.role }}</span>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    @if (orders().length > 0) {
+    <div class="data-display">
+      <h4>Orders ({{ orders().length }}):</h4>
+      <div class="data-list">
+        @for (order of orders(); track order.id) {
+        <div class="data-item">
+          <span class="data-id">#{{ order.id }}</span>
+          <span class="data-name">User {{ order.userId }}</span>
+          <span class="data-role">${{ order.totalAmount }}</span>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
   <div class="actions">
-    <h2>Testar Logger</h2>
+    <h2>📝 Test Logger</h2>
     <div class="button-group">
       <button (click)="testDebugLog()" class="btn btn-debug">Test DEBUG Log</button>
       <button (click)="testInfoLog()" class="btn btn-info">Test INFO Log</button>
@@ -43,7 +183,7 @@
       <button (click)="testErrorLog()" class="btn btn-error">Test ERROR Log</button>
     </div>
 
-    <h2>Testar Observabilidade</h2>
+    <h2>🔍 Test Observability</h2>
     <div class="button-group">
       <button (click)="testHttpRequest()" class="btn btn-http">Test HTTP Request</button>
       <button (click)="testErrorHandling()" class="btn btn-error-handler">Test Error Handler</button>
@@ -58,38 +198,39 @@
     <h2>Log History ({{ logHistory().length }} entries)</h2>
     <div class="log-container">
       @if (logHistory().length === 0) {
-        <p class="no-logs">No logs yet. Click the buttons above to generate logs.</p>
+      <p class="no-logs">No logs yet. Click the buttons above to generate logs.</p>
       } @else {
-        <div class="log-entries">
-          @for (log of logHistory(); track log.timestamp) {
-            <div class="log-entry" [ngClass]="getLogLevelClass(log.level)">
-              <div class="log-header">
-                <span class="log-timestamp">{{ log.timestamp | date:'HH:mm:ss.SSS' }}</span>
-                <span class="log-level">{{ getLogLevelName(log.level) }}</span>
-                <span class="log-source">{{ log.source }}</span>
-              </div>
-              <div class="log-message">{{ log.message }}</div>
-              @if (log.data) {
-                <div class="log-data">
-                  <pre>{{ log.data | json }}</pre>
-                </div>
-              }
-            </div>
+      <div class="log-entries">
+        @for (log of logHistory(); track log.timestamp) {
+        <div class="log-entry" [ngClass]="getLogLevelClass(log.level)">
+          <div class="log-header">
+            <span class="log-timestamp">{{ log.timestamp | date:'HH:mm:ss.SSS' }}</span>
+            <span class="log-level">{{ getLogLevelName(log.level) }}</span>
+            <span class="log-source">{{ log.source }}</span>
+          </div>
+          <div class="log-message">{{ log.message }}</div>
+          @if (log.data) {
+          <div class="log-data">
+            <pre>{{ log.data | json }}</pre>
+          </div>
           }
         </div>
+        }
+      </div>
       }
     </div>
   </div>
 
   <div class="instructions">
-    <h2>Instruções</h2>
+    <h2>📖 Instruções</h2>
     <ul>
+      <li><strong>Distributed Tracing:</strong> Clique nos botões de tracing para testar a propagação de traces entre
+        Angular e .NET API</li>
+      <li><strong>Jaeger UI:</strong> Acesse <a href="http://localhost:16686" target="_blank">http://localhost:16686</a>
+        para visualizar os traces</li>
+      <li>Procure pelo service <code>angular-observability-demo</code> ou <code>otel-tracing-api</code></li>
+      <li>Verifique se o mesmo <code>trace_id</code> aparece em ambos os serviços</li>
       <li>Abra o Console do navegador (F12) para ver os logs formatados</li>
-      <li>Teste diferentes níveis de log para ver como são exibidos</li>
-      <li>Teste requisições HTTP para ver o interceptor em ação</li>
-      <li>Teste o Error Handler para ver como erros não tratados são capturados</li>
-      <li>Verifique as variáveis de ambiente configuradas acima</li>
-      <li>Para trocar entre development e production, use: <code>ng serve --configuration=production</code></li>
     </ul>
   </div>
 
